@@ -18,8 +18,10 @@ class KeypadDevice extends ZigBeeDevice {
       return;
     }
 
-    // Bind IAS ACE cluster (0x0501) to receive arm commands with PIN codes
+    // Bind IAS ACE cluster (0x0501) to receive arm commands with PIN codes.
+    // arm() responds immediately for LED feedback; flows handle automations.
     this._iasAceBoundCluster = new IasAceBoundCluster({
+      endpoint,
       onArm: async ({ action, code, zoneId }) => {
         this._lastCode = code;
         this._lastAction = action;
@@ -110,11 +112,23 @@ class KeypadDevice extends ZigBeeDevice {
     this.homey.flow.getConditionCard('last_code_is')
       .registerRunListener(async (args) => args.code === this._lastCode);
 
+    this.homey.flow.getConditionCard('action_is')
+      .registerRunListener(async (args) => args.action === this._lastAction);
+
     this.homey.flow.getActionCard('set_keypad_mode')
       .registerRunListener(async (args) => {
         this._iasAceBoundCluster._currentAction = args.mode;
         await this.setStoreValue('currentAction', args.mode);
       });
+
+    this.homey.flow.getActionCard('accept_code')
+      .registerRunListener(async () => {
+        this._iasAceBoundCluster._currentAction = this._lastAction;
+        await this.setStoreValue('currentAction', this._lastAction);
+      });
+
+    this.homey.flow.getActionCard('reject_code')
+      .registerRunListener(async () => {});
   }
 
   async _triggerCodeEntered({ code, action, zoneId }) {

@@ -91,6 +91,66 @@
     "conditions": [
       {
         "title": {
+          "en": "Action !{{is|is not}} ...",
+          "nl": "Actie !{{is|is niet}} ..."
+        },
+        "titleFormatted": {
+          "en": "Action !{{is|is not}} [[action]]",
+          "nl": "Actie !{{is|is niet}} [[action]]"
+        },
+        "hint": {
+          "en": "Check which button was pressed on the keypad.",
+          "nl": "Controleer welke knop is ingedrukt op het keypad."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=keypad"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie"
+            },
+            "values": [
+              {
+                "id": "disarm",
+                "label": {
+                  "en": "Disarm",
+                  "nl": "Ontgrendelen"
+                }
+              },
+              {
+                "id": "arm_day_zones",
+                "label": {
+                  "en": "Arm day zones",
+                  "nl": "Dagzones inschakelen"
+                }
+              },
+              {
+                "id": "arm_night_zones",
+                "label": {
+                  "en": "Arm night zones",
+                  "nl": "Nachtzones inschakelen"
+                }
+              },
+              {
+                "id": "arm_all_zones",
+                "label": {
+                  "en": "Arm all zones",
+                  "nl": "Alle zones inschakelen"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "action_is"
+      },
+      {
+        "title": {
           "en": "Last entered code !{{is|is not}} ...",
           "nl": "Laatst ingevoerde code !{{is|is niet}} ..."
         },
@@ -118,6 +178,50 @@
       }
     ],
     "actions": [
+      {
+        "title": {
+          "en": "Accept the entered code",
+          "nl": "Accepteer de ingevoerde code"
+        },
+        "titleFormatted": {
+          "en": "Accept the entered code",
+          "nl": "Accepteer de ingevoerde code"
+        },
+        "hint": {
+          "en": "Confirms the code on the keypad (green LED). Place this in the THEN branch of your flow.",
+          "nl": "Bevestigt de code op het keypad (groene LED). Plaats dit in de DAN-tak van je flow."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=keypad"
+          }
+        ],
+        "id": "accept_code"
+      },
+      {
+        "title": {
+          "en": "Reject the entered code",
+          "nl": "Weiger de ingevoerde code"
+        },
+        "titleFormatted": {
+          "en": "Reject the entered code",
+          "nl": "Weiger de ingevoerde code"
+        },
+        "hint": {
+          "en": "Rejects the code on the keypad (red LED). Place this in the ELSE branch of your flow.",
+          "nl": "Weigert de code op het keypad (rode LED). Plaats dit in de ANDERS-tak van je flow."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=keypad"
+          }
+        ],
+        "id": "reject_code"
+      },
       {
         "title": {
           "en": "Set keypad mode to ...",

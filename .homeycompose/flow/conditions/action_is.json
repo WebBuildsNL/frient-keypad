@@ -1,0 +1,35 @@
+{
+  "title": {
+    "en": "Action !{{is|is not}} ...",
+    "nl": "Actie !{{is|is niet}} ..."
+  },
+  "titleFormatted": {
+    "en": "Action !{{is|is not}} [[action]]",
+    "nl": "Actie !{{is|is niet}} [[action]]"
+  },
+  "hint": {
+    "en": "Check which button was pressed on the keypad.",
+    "nl": "Controleer welke knop is ingedrukt op het keypad."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": {
+        "en": "Action",
+        "nl": "Actie"
+      },
+      "values": [
+        { "id": "disarm", "label": { "en": "Disarm", "nl": "Ontgrendelen" } },
+        { "id": "arm_day_zones", "label": { "en": "Arm day zones", "nl": "Dagzones inschakelen" } },
+        { "id": "arm_night_zones", "label": { "en": "Arm night zones", "nl": "Nachtzones inschakelen" } },
+        { "id": "arm_all_zones", "label": { "en": "Arm all zones", "nl": "Alle zones inschakelen" } }
+      ]
+    }
+  ]
+}
