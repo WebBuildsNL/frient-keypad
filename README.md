@@ -33,6 +33,7 @@ You can store a list of valid access codes with date ranges. This is ideal for v
    - **Name** — label to identify the code (e.g. "Guest 1")
    - **PIN Code** — the digits the user will enter on the keypad
    - **Valid from / until** — the date range the code is active
+   - **Reference ID** (optional) — an external identifier for your own reference (e.g. a booking ID like `BOOK-12345`)
 4. Click **Add Code**. The code takes effect immediately.
 5. Click **Delete** on any row to remove a code.
 
@@ -59,7 +60,8 @@ curl -X POST http://<homey>/api/app/com.frient.keypad.coderead/codes \
     "name": "Guest 1",
     "code": "1234",
     "from": "2026-03-01",
-    "till": "2026-03-15"
+    "till": "2026-03-15",
+    "reference_id": "BOOK-12345"
   }'
 ```
 
@@ -69,7 +71,7 @@ curl -X DELETE "http://<homey>/api/app/com.frient.keypad.coderead/codes?index=0"
   -H "Authorization: Bearer <token>"
 ```
 
-All endpoints return the updated codes array.
+All endpoints return the updated codes array. Each code object includes a `reference_id` field (defaults to `null` when not provided) that you can use to link codes to external systems like booking platforms.
 
 ## Flow Cards
 

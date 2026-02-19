@@ -1,14 +1,24 @@
 'use strict';
 
+function normalizeCodes(codes) {
+  return codes.map((c) => ({
+    name: c.name || '',
+    code: c.code,
+    from: c.from,
+    till: c.till,
+    reference_id: c.reference_id != null ? c.reference_id : null,
+  }));
+}
+
 module.exports = {
 
   // GET /codes — list all access codes
   async getCodes({ homey }) {
-    return homey.settings.get('codes') || [];
+    return normalizeCodes(homey.settings.get('codes') || []);
   },
 
   // POST /codes — add a new access code
-  // Body: { name: string, code: string, from: "YYYY-MM-DD", till: "YYYY-MM-DD" }
+  // Body: { name: string, code: string, from: "YYYY-MM-DD", till: "YYYY-MM-DD", reference_id: string|number|null }
   async postCodes({ homey, body }) {
     if (!body.code || !body.from || !body.till) {
       throw new Error('Missing required fields: code, from, till');
@@ -26,9 +36,10 @@ module.exports = {
       code: newCode,
       from: body.from,
       till: body.till,
+      reference_id: body.reference_id != null ? body.reference_id : null,
     });
     homey.settings.set('codes', codes);
-    return codes;
+    return normalizeCodes(codes);
   },
 
   // DELETE /codes — remove an access code by index
@@ -46,7 +57,7 @@ module.exports = {
 
     codes.splice(index, 1);
     homey.settings.set('codes', codes);
-    return codes;
+    return normalizeCodes(codes);
   },
 
 };

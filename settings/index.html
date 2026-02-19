@@ -90,6 +90,10 @@
     <label for="till" id="label-till"></label>
     <input type="date" id="till">
   </div>
+  <div class="form-group">
+    <label for="reference_id" id="label-reference_id"></label>
+    <input type="text" id="reference_id" placeholder="BOOK-12345">
+  </div>
   <button class="btn btn-primary" id="add-btn"></button>
   <div class="status" id="status"></div>
 
@@ -107,6 +111,7 @@
       document.getElementById('label-code').textContent = __('label_code');
       document.getElementById('label-from').textContent = __('label_from');
       document.getElementById('label-till').textContent = __('label_till');
+      document.getElementById('label-reference_id').textContent = __('label_reference_id');
       document.getElementById('add-btn').textContent = __('btn_add');
 
       function getStatusClass(from, till) {
@@ -136,6 +141,7 @@
           + '<th>' + escapeHtml(__('col_code')) + '</th>'
           + '<th>' + escapeHtml(__('col_from')) + '</th>'
           + '<th>' + escapeHtml(__('col_till')) + '</th>'
+          + '<th>' + escapeHtml(__('col_reference_id')) + '</th>'
           + '<th>' + escapeHtml(__('col_status')) + '</th>'
           + '<th></th></tr>';
         for (var i = 0; i < codes.length; i++) {
@@ -146,6 +152,7 @@
             + '<td>' + escapeHtml(c.code) + '</td>'
             + '<td>' + escapeHtml(c.from) + '</td>'
             + '<td>' + escapeHtml(c.till) + '</td>'
+            + '<td>' + escapeHtml(c.reference_id != null ? String(c.reference_id) : '-') + '</td>'
             + '<td><span class="' + cls + '">' + getStatusLabel(cls) + '</span></td>'
             + '<td><button class="btn btn-danger" data-index="' + i + '">' + escapeHtml(__('btn_delete')) + '</button></td>'
             + '</tr>';
@@ -188,6 +195,7 @@
         var code = document.getElementById('code').value.trim();
         var from = document.getElementById('from').value;
         var till = document.getElementById('till').value;
+        var referenceId = document.getElementById('reference_id').value.trim() || null;
 
         if (!code || !from || !till) {
           Homey.alert(__('error_required'));
@@ -209,7 +217,7 @@
             Homey.alert(__('error_duplicate'));
             return;
           }
-          codes.push({ name: name, code: code, from: from, till: till });
+          codes.push({ name: name, code: code, from: from, till: till, reference_id: referenceId });
           Homey.set('codes', codes, function(err) {
             if (err) return;
             renderCodes(codes);
@@ -217,6 +225,7 @@
             document.getElementById('code').value = '';
             document.getElementById('from').value = '';
             document.getElementById('till').value = '';
+            document.getElementById('reference_id').value = '';
             statusEl.textContent = __('added');
             setTimeout(function() { statusEl.textContent = ''; }, 2000);
           });
