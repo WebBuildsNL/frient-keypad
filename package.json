@@ -1,0 +1,14 @@
+{
+  "name": "com.frient.keypad.coderead",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "homey app run",
+    "install-app": "homey app install"
+  },
+  "dependencies": {
+    "homey-zigbeedriver": "^2.2.15",
+    "zigbee-clusters": "^2.0.0"
+  }
+}

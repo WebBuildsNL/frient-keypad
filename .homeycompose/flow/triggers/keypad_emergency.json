@@ -1,0 +1,13 @@
+{
+  "title": {
+    "en": "Emergency button pressed",
+    "nl": "Noodknop ingedrukt"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    }
+  ]
+}

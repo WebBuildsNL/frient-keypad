@@ -1,0 +1,37 @@
+{
+  "name": {
+    "en": "Frient Intelligent Keypad",
+    "nl": "Frient Intelligent Keypad"
+  },
+  "class": "homealarm",
+  "capabilities": [
+    "alarm_tamper",
+    "measure_battery",
+    "alarm_battery"
+  ],
+  "energy": {
+    "batteries": ["AA", "AA", "AA", "AA"]
+  },
+  "zigbee": {
+    "manufacturerName": ["frient A/S", "Develco Products A/S"],
+    "productId": ["KEPZB-110", "KEYZB-110"],
+    "endpoints": {
+      "44": {
+        "clusters": [0, 1, 3, 32, 1280],
+        "bindings": [1281]
+      }
+    },
+    "learnmode": {
+      "instruction": {
+        "en": "Press and hold the small reset button on the back of the keypad for 10 seconds until the LED flashes.",
+        "nl": "Houd de kleine resetknop aan de achterkant van het keypad 10 seconden ingedrukt totdat de LED knippert."
+      }
+    }
+  },
+  "platforms": ["local"],
+  "connectivity": ["zigbee"],
+  "images": {
+    "small": "/drivers/keypad/assets/images/small.png",
+    "large": "/drivers/keypad/assets/images/large.png"
+  }
+}

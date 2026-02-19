@@ -1,0 +1,26 @@
+{
+  "title": {
+    "en": "Last entered code !{{is|is not}} ...",
+    "nl": "Laatst ingevoerde code !{{is|is niet}} ..."
+  },
+  "titleFormatted": {
+    "en": "Last entered code !{{is|is not}} [[code]]",
+    "nl": "Laatst ingevoerde code !{{is|is niet}} [[code]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    },
+    {
+      "type": "text",
+      "name": "code",
+      "title": {
+        "en": "PIN code",
+        "nl": "Pincode"
+      },
+      "placeholder": "1234"
+    }
+  ]
+}

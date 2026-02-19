@@ -1,0 +1,46 @@
+{
+  "title": {
+    "en": "A code was entered",
+    "nl": "Er is een code ingevoerd"
+  },
+  "hint": {
+    "en": "Triggers when a PIN code is entered on the keypad and an arm/disarm button is pressed.",
+    "nl": "Wordt geactiveerd wanneer een pincode wordt ingevoerd op het keypad en er op een arm/disarm knop wordt gedrukt."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "code",
+      "type": "string",
+      "title": {
+        "en": "PIN code",
+        "nl": "Pincode"
+      },
+      "example": "1234"
+    },
+    {
+      "name": "action",
+      "type": "string",
+      "title": {
+        "en": "Action",
+        "nl": "Actie"
+      },
+      "example": "disarm"
+    },
+    {
+      "name": "zone_id",
+      "type": "number",
+      "title": {
+        "en": "Zone ID",
+        "nl": "Zone ID"
+      },
+      "example": 23
+    }
+  ]
+}

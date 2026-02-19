@@ -1,0 +1,30 @@
+{
+  "title": {
+    "en": "Set keypad mode to ...",
+    "nl": "Zet keypad modus naar ..."
+  },
+  "titleFormatted": {
+    "en": "Set keypad mode to [[mode]]",
+    "nl": "Zet keypad modus naar [[mode]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode"
+      },
+      "values": [
+        { "id": "disarm", "title": { "en": "Disarm", "nl": "Ontwapenen" } },
+        { "id": "arm_day_zones", "title": { "en": "Arm Day (Home)", "nl": "Arm Dag (Thuis)" } },
+        { "id": "arm_night_zones", "title": { "en": "Arm Night", "nl": "Arm Nacht" } },
+        { "id": "arm_all_zones", "title": { "en": "Arm All (Away)", "nl": "Arm Alles (Weg)" } }
+      ]
+    }
+  ]
+}
