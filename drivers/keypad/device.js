@@ -38,13 +38,21 @@ class KeypadDevice extends ZigBeeDevice {
     this._iasAceBoundCluster._currentAction = this._lastAction;
     endpoint.bind(CLUSTER.IAS_ACE.NAME, this._iasAceBoundCluster);
 
-    // IAS Zone enrollment (cluster 0x0500)
+    // IAS Zone (cluster 0x0500) — enrollment + tamper alarm
     if (endpoint.clusters.iasZone) {
       endpoint.clusters.iasZone.onZoneEnrollRequest = () => {
         endpoint.clusters.iasZone.zoneEnrollResponse({
           enrollResponseCode: 0,
           zoneId: 23,
         });
+      };
+
+      endpoint.clusters.iasZone.on('attr.zoneStatus', (zoneStatus) => {
+        this.setCapabilityValue('alarm_tamper', this._parseTamper(zoneStatus)).catch(this.error);
+      });
+
+      endpoint.clusters.iasZone.onZoneStatusChangeNotification = (payload) => {
+        this.setCapabilityValue('alarm_tamper', this._parseTamper(payload.zoneStatus)).catch(this.error);
       };
 
       if (this.isFirstInit()) {
@@ -61,6 +69,23 @@ class KeypadDevice extends ZigBeeDevice {
 
     // Battery reporting (cluster 0x0001)
     if (endpoint.clusters.powerConfiguration) {
+      endpoint.clusters.powerConfiguration.on('attr.batteryPercentageRemaining', (value) => {
+        const batteryPct = Math.round(value / 2);
+        this.setCapabilityValue('measure_battery', batteryPct).catch(this.error);
+        this.setCapabilityValue('alarm_battery', batteryPct < 10).catch(this.error);
+      });
+
+      try {
+        const attrs = await endpoint.clusters.powerConfiguration.readAttributes(['batteryPercentageRemaining']);
+        if (attrs.batteryPercentageRemaining !== undefined) {
+          const batteryPct = Math.round(attrs.batteryPercentageRemaining / 2);
+          this.setCapabilityValue('measure_battery', batteryPct).catch(this.error);
+          this.setCapabilityValue('alarm_battery', batteryPct < 10).catch(this.error);
+        }
+      } catch (err) {
+        // Battery read may fail if keypad is asleep
+      }
+
       try {
         await this.configureAttributeReporting([{
           endpointId: 44,
@@ -70,12 +95,6 @@ class KeypadDevice extends ZigBeeDevice {
           maxInterval: 43200,
           minChange: 2,
         }]);
-
-        endpoint.clusters.powerConfiguration.on('attr.batteryPercentageRemaining', (value) => {
-          const batteryPct = Math.round(value / 2);
-          this.setCapabilityValue('measure_battery', batteryPct).catch(this.error);
-          this.setCapabilityValue('alarm_battery', batteryPct < 10).catch(this.error);
-        });
       } catch (err) {
         // Battery reporting config may fail on some firmware versions
       }
@@ -112,6 +131,14 @@ class KeypadDevice extends ZigBeeDevice {
     } catch (err) {
       this.error('Failed to trigger keypad_emergency:', err);
     }
+  }
+
+  _parseTamper(zoneStatus) {
+    if (Buffer.isBuffer(zoneStatus)) return !!(zoneStatus.readUInt16LE(0) & (1 << 2));
+    if (typeof zoneStatus === 'number') return !!(zoneStatus & (1 << 2));
+    // Bitmap object from zigbee-clusters — check for named 'tamper' bit
+    if (zoneStatus && typeof zoneStatus === 'object') return !!zoneStatus.tamper;
+    return false;
   }
 
   onDeleted() {
