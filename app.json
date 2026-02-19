@@ -17,6 +17,20 @@
   ],
   "brandColor": "#1E90FF",
   "permissions": [],
+  "api": {
+    "getCodes": {
+      "method": "GET",
+      "path": "/codes"
+    },
+    "postCodes": {
+      "method": "POST",
+      "path": "/codes"
+    },
+    "deleteCodes": {
+      "method": "DELETE",
+      "path": "/codes"
+    }
+  },
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png"
@@ -69,6 +83,23 @@
               "nl": "Zone ID"
             },
             "example": 23
+          },
+          {
+            "name": "code_valid",
+            "type": "boolean",
+            "title": {
+              "en": "Code is valid",
+              "nl": "Code is geldig"
+            }
+          },
+          {
+            "name": "code_name",
+            "type": "string",
+            "title": {
+              "en": "Code name",
+              "nl": "Codenaam"
+            },
+            "example": "Guest 1"
           }
         ],
         "id": "keypad_code_entered"
@@ -148,6 +179,24 @@
           }
         ],
         "id": "action_is"
+      },
+      {
+        "title": {
+          "en": "The entered code !{{is|is not}} valid",
+          "nl": "De ingevoerde code !{{is|is niet}} geldig"
+        },
+        "hint": {
+          "en": "Checks if the last entered code exists in the stored access codes and is within its valid date range.",
+          "nl": "Controleert of de laatst ingevoerde code bestaat in de opgeslagen toegangscodes en binnen het geldige datumbereik valt."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=keypad"
+          }
+        ],
+        "id": "code_is_valid"
       },
       {
         "title": {

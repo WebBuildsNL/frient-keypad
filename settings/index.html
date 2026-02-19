@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 1em;
+      color: #333;
+    }
+    h2 { margin-top: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5em;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { font-weight: 600; }
+    .empty-msg {
+      color: #999;
+      font-style: italic;
+      padding: 1em 0;
+    }
+    .form-group {
+      margin-bottom: 0.75em;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: #1E90FF;
+      color: #fff;
+    }
+    .btn-danger {
+      background: #e74c3c;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 13px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .status {
+      margin-top: 0.5em;
+      font-style: italic;
+      color: #27ae60;
+    }
+    .expired { color: #999; }
+    .active { color: #27ae60; font-weight: 600; }
+    .future { color: #1E90FF; }
+  </style>
+</head>
+<body>
+  <h2 id="title-codes"></h2>
+  <div id="codes-list"></div>
+
+  <h2 id="title-add"></h2>
+  <div class="form-group">
+    <label for="name" id="label-name"></label>
+    <input type="text" id="name" placeholder="Guest 1">
+  </div>
+  <div class="form-group">
+    <label for="code" id="label-code"></label>
+    <input type="text" id="code" placeholder="1234" inputmode="numeric">
+  </div>
+  <div class="form-group">
+    <label for="from" id="label-from"></label>
+    <input type="date" id="from">
+  </div>
+  <div class="form-group">
+    <label for="till" id="label-till"></label>
+    <input type="date" id="till">
+  </div>
+  <button class="btn btn-primary" id="add-btn"></button>
+  <div class="status" id="status"></div>
+
+  <script>
+    function onHomeyReady(Homey) {
+      Homey.ready();
+
+      var __ = function(key) { return Homey.__('settings.' + key); };
+      var statusEl = document.getElementById('status');
+
+      // Set translated labels
+      document.getElementById('title-codes').textContent = __('title_codes');
+      document.getElementById('title-add').textContent = __('title_add');
+      document.getElementById('label-name').textContent = __('label_name');
+      document.getElementById('label-code').textContent = __('label_code');
+      document.getElementById('label-from').textContent = __('label_from');
+      document.getElementById('label-till').textContent = __('label_till');
+      document.getElementById('add-btn').textContent = __('btn_add');
+
+      function getStatusClass(from, till) {
+        var now = new Date();
+        var fromDate = new Date(from);
+        var tillDate = new Date(till);
+        tillDate.setHours(23, 59, 59, 999);
+        if (now > tillDate) return 'expired';
+        if (now < fromDate) return 'future';
+        return 'active';
+      }
+
+      function getStatusLabel(cls) {
+        if (cls === 'expired') return __('status_expired');
+        if (cls === 'future') return __('status_upcoming');
+        return __('status_active');
+      }
+
+      function renderCodes(codes) {
+        var container = document.getElementById('codes-list');
+        if (!codes || codes.length === 0) {
+          container.innerHTML = '<p class="empty-msg">' + escapeHtml(__('empty')) + '</p>';
+          return;
+        }
+        var html = '<table><tr>'
+          + '<th>' + escapeHtml(__('col_name')) + '</th>'
+          + '<th>' + escapeHtml(__('col_code')) + '</th>'
+          + '<th>' + escapeHtml(__('col_from')) + '</th>'
+          + '<th>' + escapeHtml(__('col_till')) + '</th>'
+          + '<th>' + escapeHtml(__('col_status')) + '</th>'
+          + '<th></th></tr>';
+        for (var i = 0; i < codes.length; i++) {
+          var c = codes[i];
+          var cls = getStatusClass(c.from, c.till);
+          html += '<tr>'
+            + '<td>' + escapeHtml(c.name || '-') + '</td>'
+            + '<td>' + escapeHtml(c.code) + '</td>'
+            + '<td>' + escapeHtml(c.from) + '</td>'
+            + '<td>' + escapeHtml(c.till) + '</td>'
+            + '<td><span class="' + cls + '">' + getStatusLabel(cls) + '</span></td>'
+            + '<td><button class="btn btn-danger" data-index="' + i + '">' + escapeHtml(__('btn_delete')) + '</button></td>'
+            + '</tr>';
+        }
+        html += '</table>';
+        container.innerHTML = html;
+
+        var deleteButtons = container.querySelectorAll('.btn-danger');
+        for (var j = 0; j < deleteButtons.length; j++) {
+          deleteButtons[j].addEventListener('click', function() {
+            var idx = parseInt(this.getAttribute('data-index'), 10);
+            deleteCode(idx);
+          });
+        }
+      }
+
+      function loadCodes() {
+        Homey.get('codes', function(err, codes) {
+          if (err) return;
+          renderCodes(codes || []);
+        });
+      }
+
+      function deleteCode(index) {
+        Homey.get('codes', function(err, codes) {
+          if (err) return;
+          codes = codes || [];
+          codes.splice(index, 1);
+          Homey.set('codes', codes, function(err) {
+            if (err) return;
+            renderCodes(codes);
+            statusEl.textContent = __('removed');
+            setTimeout(function() { statusEl.textContent = ''; }, 2000);
+          });
+        });
+      }
+
+      document.getElementById('add-btn').addEventListener('click', function() {
+        var name = document.getElementById('name').value.trim();
+        var code = document.getElementById('code').value.trim();
+        var from = document.getElementById('from').value;
+        var till = document.getElementById('till').value;
+
+        if (!code || !from || !till) {
+          Homey.alert(__('error_required'));
+          return;
+        }
+
+        if (new Date(till) < new Date(from)) {
+          Homey.alert(__('error_date'));
+          return;
+        }
+
+        Homey.get('codes', function(err, codes) {
+          if (err) return;
+          codes = codes || [];
+          var duplicate = codes.some(function(c) {
+            return c.code === code && c.from === from && c.till === till;
+          });
+          if (duplicate) {
+            Homey.alert(__('error_duplicate'));
+            return;
+          }
+          codes.push({ name: name, code: code, from: from, till: till });
+          Homey.set('codes', codes, function(err) {
+            if (err) return;
+            renderCodes(codes);
+            document.getElementById('name').value = '';
+            document.getElementById('code').value = '';
+            document.getElementById('from').value = '';
+            document.getElementById('till').value = '';
+            statusEl.textContent = __('added');
+            setTimeout(function() { statusEl.textContent = ''; }, 2000);
+          });
+        });
+      });
+
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      loadCodes();
+    }
+  </script>
+</body>
+</html>

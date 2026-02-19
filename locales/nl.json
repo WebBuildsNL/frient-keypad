@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "title_codes": "Toegangscodes",
+    "title_add": "Nieuwe code toevoegen",
+    "label_name": "Naam (bijv. \"Gast 1\")",
+    "label_code": "Pincode",
+    "label_from": "Geldig vanaf",
+    "label_till": "Geldig tot",
+    "btn_add": "Code toevoegen",
+    "btn_delete": "Verwijderen",
+    "col_name": "Naam",
+    "col_code": "Code",
+    "col_from": "Vanaf",
+    "col_till": "Tot",
+    "col_status": "Status",
+    "status_active": "Actief",
+    "status_expired": "Verlopen",
+    "status_upcoming": "Gepland",
+    "empty": "Geen toegangscodes ingesteld. Alle keypadcodes worden geaccepteerd.",
+    "added": "Code toegevoegd!",
+    "removed": "Code verwijderd.",
+    "error_required": "Vul de pincode, startdatum en einddatum in.",
+    "error_date": "\"Geldig tot\" moet op of na \"Geldig vanaf\" liggen.",
+    "error_duplicate": "Er bestaat al een code met dezelfde pincode en datumbereik."
+  }
+}

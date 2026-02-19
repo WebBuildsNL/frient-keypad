@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "title_codes": "Access Codes",
+    "title_add": "Add New Code",
+    "label_name": "Name (e.g. \"Guest 1\")",
+    "label_code": "PIN Code",
+    "label_from": "Valid from",
+    "label_till": "Valid until",
+    "btn_add": "Add Code",
+    "btn_delete": "Delete",
+    "col_name": "Name",
+    "col_code": "Code",
+    "col_from": "From",
+    "col_till": "Until",
+    "col_status": "Status",
+    "status_active": "Active",
+    "status_expired": "Expired",
+    "status_upcoming": "Upcoming",
+    "empty": "No access codes configured. All keypad codes will be accepted.",
+    "added": "Code added!",
+    "removed": "Code removed.",
+    "error_required": "Please fill in the PIN code, start date, and end date.",
+    "error_date": "\"Valid until\" must be on or after \"Valid from\".",
+    "error_duplicate": "A code with the same PIN and date range already exists."
+  }
+}

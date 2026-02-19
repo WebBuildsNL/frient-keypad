@@ -16,17 +16,76 @@ The Frient keypad communicates over Zigbee using the **IAS ACE** (Intruder Alarm
 
 This app implements a **BoundCluster** on that IAS ACE cluster to intercept these commands and extract the code.
 
+## Access Code Management
+
+You can store a list of valid access codes with date ranges. This is ideal for vacation rentals — give each guest a unique code that only works during their stay.
+
+### How validation works
+
+- **No codes configured** — all entered codes are accepted (backward compatible, green LED).
+- **Codes configured** — only codes matching a stored entry whose date range includes today are accepted (green LED). All other codes are rejected (red LED).
+
+### Managing codes via the Settings page
+
+1. Open the Homey app → More → Apps → Frient Keypad Code Reader → Settings.
+2. You'll see a table of current codes with their status (Active, Upcoming, Expired).
+3. Fill in the form at the bottom to add a new code:
+   - **Name** — label to identify the code (e.g. "Guest 1")
+   - **PIN Code** — the digits the user will enter on the keypad
+   - **Valid from / until** — the date range the code is active
+4. Click **Add Code**. The code takes effect immediately.
+5. Click **Delete** on any row to remove a code.
+
+### Managing codes via the API
+
+The app exposes REST endpoints for programmatic code management. Authenticate with a Homey API Bearer token (get one from [Homey Developer Tools](https://tools.developer.homey.app)).
+
+**Finding your Homey address:**
+- **Local IP** — Open the Homey mobile app → More → Settings → General. You can also try `homey.local` (mDNS) or check your router's DHCP client list.
+- **Cloud URL** — Use `https://<cloud-id>.connect.athom.com` instead of the local IP. Find your Cloud ID in the Homey Developer Tools.
+
+**List all codes:**
+```bash
+curl http://<homey>/api/app/com.frient.keypad.coderead/codes \
+  -H "Authorization: Bearer <token>"
+```
+
+**Add a code:**
+```bash
+curl -X POST http://<homey>/api/app/com.frient.keypad.coderead/codes \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Guest 1",
+    "code": "1234",
+    "from": "2026-03-01",
+    "till": "2026-03-15"
+  }'
+```
+
+**Delete a code (by index):**
+```bash
+curl -X DELETE "http://<homey>/api/app/com.frient.keypad.coderead/codes?index=0" \
+  -H "Authorization: Bearer <token>"
+```
+
+All endpoints return the updated codes array.
+
 ## Flow Cards
 
 ### Triggers (When...)
-- **A code was entered** — Fires whenever someone enters a code + presses arm/disarm. Tokens: `code` (string), `action` (string), `zone_id` (number)
+- **A code was entered** — Fires whenever someone enters a code + presses arm/disarm. Tokens: `code` (string), `action` (string), `zone_id` (number), `code_valid` (boolean), `code_name` (string)
 - **Emergency button pressed** — Fires when the SOS button is pressed
 
 ### Conditions (And...)
-- **Last entered code is/is not ...** — Check if the last entered code matches a value
+- **The entered code is/is not valid** — Check if the last entered code exists in the stored access codes and is within its valid date range
+- **Last entered code is/is not ...** — Check if the last entered code matches a specific value
+- **Action is/is not ...** — Check which button was pressed (disarm, arm day, arm night, arm all)
 
 ### Actions (Then...)
-- **Set keypad mode to ...** — Send a mode change to the keypad (disarm, arm day, arm night, arm all). Updates the keypad's LED state.
+- **Accept the entered code** — Confirms the code on the keypad (green LED)
+- **Reject the entered code** — Rejects the code on the keypad (red LED)
+- **Set keypad mode to ...** — Send a mode change to the keypad (disarm, arm day, arm night, arm all)
 
 ## Installation (Development)
 
@@ -55,7 +114,7 @@ This app implements a **BoundCluster** on that IAS ACE cluster to intercept thes
 
 - **You must remove the keypad from the official frient app first** (or it won't pair with this app since a Zigbee device can only be paired to one app at a time).
 - After pairing, the keypad should start sending arm commands with PIN codes.
-- The `code` token in the flow is the **raw string** entered on the keypad. You are responsible for validating it in your flows (e.g., compare it to a known code using the condition card or a logic card).
+- The `code` token in the flow is the **raw string** entered on the keypad.
 
 ## Security Considerations
 

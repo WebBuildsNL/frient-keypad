@@ -1,0 +1,17 @@
+{
+  "title": {
+    "en": "The entered code !{{is|is not}} valid",
+    "nl": "De ingevoerde code !{{is|is niet}} geldig"
+  },
+  "hint": {
+    "en": "Checks if the last entered code exists in the stored access codes and is within its valid date range.",
+    "nl": "Controleert of de laatst ingevoerde code bestaat in de opgeslagen toegangscodes en binnen het geldige datumbereik valt."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    }
+  ]
+}

@@ -22,11 +22,13 @@ class KeypadDevice extends ZigBeeDevice {
     // arm() responds immediately for LED feedback; flows handle automations.
     this._iasAceBoundCluster = new IasAceBoundCluster({
       endpoint,
-      onArm: async ({ action, code, zoneId }) => {
+      validateCode: (code) => this.homey.app.validateCode(code),
+      onArm: async ({ action, code, zoneId, valid, codeName }) => {
         this._lastCode = code;
         this._lastAction = action;
+        this._lastCodeValid = valid;
         await this.setStoreValue('currentAction', action);
-        await this._triggerCodeEntered({ code, action, zoneId });
+        await this._triggerCodeEntered({ code, action, zoneId, code_valid: valid, code_name: codeName });
       },
 
       onEmergency: async () => {
@@ -115,6 +117,9 @@ class KeypadDevice extends ZigBeeDevice {
     this.homey.flow.getConditionCard('action_is')
       .registerRunListener(async (args) => args.action === this._lastAction);
 
+    this.homey.flow.getConditionCard('code_is_valid')
+      .registerRunListener(async () => this._lastCodeValid === true);
+
     this.homey.flow.getActionCard('set_keypad_mode')
       .registerRunListener(async (args) => {
         this._iasAceBoundCluster._currentAction = args.mode;
@@ -131,9 +136,9 @@ class KeypadDevice extends ZigBeeDevice {
       .registerRunListener(async () => {});
   }
 
-  async _triggerCodeEntered({ code, action, zoneId }) {
+  async _triggerCodeEntered({ code, action, zoneId, code_valid, code_name }) {
     try {
-      await this._codeEnteredTrigger.trigger(this, { code, action, zone_id: zoneId });
+      await this._codeEnteredTrigger.trigger(this, { code, action, zone_id: zoneId, code_valid, code_name });
     } catch (err) {
       this.error('Failed to trigger keypad_code_entered:', err);
     }

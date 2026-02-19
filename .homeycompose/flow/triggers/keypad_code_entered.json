@@ -41,6 +41,23 @@
         "nl": "Zone ID"
       },
       "example": 23
+    },
+    {
+      "name": "code_valid",
+      "type": "boolean",
+      "title": {
+        "en": "Code is valid",
+        "nl": "Code is geldig"
+      }
+    },
+    {
+      "name": "code_name",
+      "type": "string",
+      "title": {
+        "en": "Code name",
+        "nl": "Codenaam"
+      },
+      "example": "Guest 1"
     }
   ]
 }
