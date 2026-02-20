@@ -37,7 +37,10 @@ module.exports = {
     }
 
     const codes = homey.settings.get('codes') || [];
-    const newCode = String(body.code);
+    const newCode = String(body.code).trim();
+    if (!newCode) {
+      throw new Error('Code cannot be empty or whitespace-only');
+    }
     const duplicate = codes.some((c) => c.code === newCode && c.from === fromNorm && c.till === tillNorm);
     if (duplicate) {
       throw new Error('A code with the same PIN and date range already exists');

@@ -65,7 +65,7 @@ class KeypadDevice extends ZigBeeDevice {
             enrollResponseCode: 0,
             zoneId: 23,
           });
-        } catch (err) {
+        } catch (_err) {
           // May timeout if keypad is asleep — this is normal
         }
       }
@@ -86,7 +86,7 @@ class KeypadDevice extends ZigBeeDevice {
           this.setCapabilityValue('measure_battery', batteryPct).catch(this.error);
           this.setCapabilityValue('alarm_battery', batteryPct < 10).catch(this.error);
         }
-      } catch (err) {
+      } catch (_err) {
         // Battery read may fail if keypad is asleep
       }
 
@@ -99,7 +99,7 @@ class KeypadDevice extends ZigBeeDevice {
           maxInterval: 43200,
           minChange: 2,
         }]);
-      } catch (err) {
+      } catch (_err) {
         // Battery reporting config may fail on some firmware versions
       }
     }

@@ -22,7 +22,7 @@ You can store a list of valid access codes with date ranges. This is ideal for v
 
 ### How validation works
 
-- **No codes configured** — all entered codes are accepted (backward compatible, green LED).
+- **No codes configured** — all entered codes are rejected (red LED). Add at least one code to enable access.
 - **Codes configured** — only codes matching a stored entry whose date range includes today are accepted (green LED). All other codes are rejected (red LED).
 
 ### Managing codes via the Settings page
