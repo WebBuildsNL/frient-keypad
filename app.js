@@ -39,23 +39,18 @@ class FrientKeypadApp extends Homey.App {
     if (codes.length === 0) return { valid: false, name: '' };
 
     const nowLocal = this._nowLocal();
-    this.log(`[validateCode] code="${code}", nowLocal="${nowLocal}", storedCodes=${JSON.stringify(codes)}`);
 
     const match = codes.find((c) => {
       if (c.code !== code) return false;
       const from = c.from;
       // Backward compat: date-only till (length 10) gets end-of-day
       const till = (c.till && c.till.length === 10) ? `${c.till} 23:59` : c.till;
-      const inRange = nowLocal >= from && nowLocal <= till;
-      this.log(`[validateCode] match candidate: from="${from}", till="${till}", inRange: ${inRange}`);
-      return inRange;
+      return nowLocal >= from && nowLocal <= till;
     });
 
-    const result = match
+    return match
       ? { valid: true, name: match.name || '' }
       : { valid: false, name: '' };
-    this.log(`[validateCode] result: ${JSON.stringify(result)}`);
-    return result;
   }
 
 }
