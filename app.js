@@ -20,26 +20,42 @@ class FrientKeypadApp extends Homey.App {
   }
 
   /**
+   * Get current time in Homey's configured timezone as "YYYY-MM-DD HH:mm".
+   * Uses sv-SE locale which natively outputs "YYYY-MM-DD HH:mm:ss" format.
+   */
+  _nowLocal() {
+    const tz = this.homey.clock.getTimezone();
+    return new Date().toLocaleString('sv-SE', { timeZone: tz }).slice(0, 16);
+  }
+
+  /**
    * Validate a PIN code against the stored codes list.
    * Returns { valid: boolean, name: string }.
-   * If no codes are configured, all codes are accepted (backward compatible).
+   * If no codes are configured, all codes are rejected.
+   * Compares as strings in the Homey's timezone — no Date parsing needed.
    */
   validateCode(code) {
     const codes = this.homey.settings.get('codes') || [];
-    if (codes.length === 0) return { valid: true, name: '' };
+    if (codes.length === 0) return { valid: false, name: '' };
 
-    const now = new Date();
+    const nowLocal = this._nowLocal();
+    this.log(`[validateCode] code="${code}", nowLocal="${nowLocal}", storedCodes=${JSON.stringify(codes)}`);
+
     const match = codes.find((c) => {
       if (c.code !== code) return false;
-      const from = new Date(c.from);
-      const till = new Date(c.till);
-      till.setHours(23, 59, 59, 999);
-      return now >= from && now <= till;
+      const from = c.from;
+      // Backward compat: date-only till (length 10) gets end-of-day
+      const till = (c.till && c.till.length === 10) ? `${c.till} 23:59` : c.till;
+      const inRange = nowLocal >= from && nowLocal <= till;
+      this.log(`[validateCode] match candidate: from="${from}", till="${till}", inRange: ${inRange}`);
+      return inRange;
     });
 
-    return match
+    const result = match
       ? { valid: true, name: match.name || '' }
       : { valid: false, name: '' };
+    this.log(`[validateCode] result: ${JSON.stringify(result)}`);
+    return result;
   }
 
 }

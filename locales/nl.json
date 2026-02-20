@@ -9,6 +9,7 @@
     "label_reference_id": "Referentie-ID (optioneel)",
     "btn_add": "Code toevoegen",
     "btn_delete": "Verwijderen",
+    "btn_refresh": "Vernieuwen",
     "col_name": "Naam",
     "col_code": "Code",
     "col_from": "Vanaf",
@@ -18,10 +19,10 @@
     "status_active": "Actief",
     "status_expired": "Verlopen",
     "status_upcoming": "Gepland",
-    "empty": "Geen toegangscodes ingesteld. Alle keypadcodes worden geaccepteerd.",
+    "empty": "Geen toegangscodes ingesteld. Alle keypadcodes worden geweigerd.",
     "added": "Code toegevoegd!",
     "removed": "Code verwijderd.",
-    "error_required": "Vul de pincode, startdatum en einddatum in.",
+    "error_required": "Vul de pincode, startdatum/-tijd en einddatum/-tijd in.",
     "error_date": "\"Geldig tot\" moet op of na \"Geldig vanaf\" liggen.",
     "error_duplicate": "Er bestaat al een code met dezelfde pincode en datumbereik."
   }

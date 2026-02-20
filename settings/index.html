@@ -9,17 +9,29 @@
       color: #333;
     }
     h2 { margin-top: 0; }
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 1.5em;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1.5em;
+      font-size: 13px;
     }
     th, td {
       text-align: left;
-      padding: 8px 12px;
-      border-bottom: 1px solid #ddd;
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
     }
-    th { font-weight: 600; }
+    th {
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 0.3px;
+    }
     .empty-msg {
       color: #999;
       font-style: italic;
@@ -70,7 +82,7 @@
   </style>
 </head>
 <body>
-  <h2 id="title-codes"></h2>
+  <h2 id="title-codes" style="display:inline;"></h2> <a href="#" id="refresh-btn" style="font-size:13px; color:#1E90FF; text-decoration:none; vertical-align:middle;"></a>
   <div id="codes-list"></div>
 
   <h2 id="title-add"></h2>
@@ -84,11 +96,11 @@
   </div>
   <div class="form-group">
     <label for="from" id="label-from"></label>
-    <input type="date" id="from">
+    <input type="datetime-local" id="from">
   </div>
   <div class="form-group">
     <label for="till" id="label-till"></label>
-    <input type="date" id="till">
+    <input type="datetime-local" id="till">
   </div>
   <div class="form-group">
     <label for="reference_id" id="label-reference_id"></label>
@@ -113,12 +125,19 @@
       document.getElementById('label-till').textContent = __('label_till');
       document.getElementById('label-reference_id').textContent = __('label_reference_id');
       document.getElementById('add-btn').textContent = __('btn_add');
+      document.getElementById('refresh-btn').textContent = __('btn_refresh');
+
+      function parseLocalDate(str) {
+        var parts = str.replace('T', ' ').split(/[- :]/);
+        if (parts.length >= 5) return new Date(+parts[0], +parts[1] - 1, +parts[2], +parts[3], +parts[4]);
+        return new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      }
 
       function getStatusClass(from, till) {
         var now = new Date();
-        var fromDate = new Date(from);
-        var tillDate = new Date(till);
-        tillDate.setHours(23, 59, 59, 999);
+        var fromDate = parseLocalDate(from);
+        var tillDate = parseLocalDate(till);
+        if (till && till.length === 10) tillDate.setHours(23, 59, 59, 999);
         if (now > tillDate) return 'expired';
         if (now < fromDate) return 'future';
         return 'active';
@@ -136,13 +155,13 @@
           container.innerHTML = '<p class="empty-msg">' + escapeHtml(__('empty')) + '</p>';
           return;
         }
-        var html = '<table><tr>'
+        var html = '<div class="table-wrap"><table><tr>'
           + '<th>' + escapeHtml(__('col_name')) + '</th>'
           + '<th>' + escapeHtml(__('col_code')) + '</th>'
+          + '<th>' + escapeHtml(__('col_status')) + '</th>'
           + '<th>' + escapeHtml(__('col_from')) + '</th>'
           + '<th>' + escapeHtml(__('col_till')) + '</th>'
           + '<th>' + escapeHtml(__('col_reference_id')) + '</th>'
-          + '<th>' + escapeHtml(__('col_status')) + '</th>'
           + '<th></th></tr>';
         for (var i = 0; i < codes.length; i++) {
           var c = codes[i];
@@ -150,14 +169,14 @@
           html += '<tr>'
             + '<td>' + escapeHtml(c.name || '-') + '</td>'
             + '<td>' + escapeHtml(c.code) + '</td>'
+            + '<td><span class="' + cls + '">' + getStatusLabel(cls) + '</span></td>'
             + '<td>' + escapeHtml(c.from) + '</td>'
             + '<td>' + escapeHtml(c.till) + '</td>'
             + '<td>' + escapeHtml(c.reference_id != null ? String(c.reference_id) : '-') + '</td>'
-            + '<td><span class="' + cls + '">' + getStatusLabel(cls) + '</span></td>'
             + '<td><button class="btn btn-danger" data-index="' + i + '">' + escapeHtml(__('btn_delete')) + '</button></td>'
             + '</tr>';
         }
-        html += '</table>';
+        html += '</table></div>';
         container.innerHTML = html;
 
         var deleteButtons = container.querySelectorAll('.btn-danger');
@@ -193,8 +212,8 @@
       document.getElementById('add-btn').addEventListener('click', function() {
         var name = document.getElementById('name').value.trim();
         var code = document.getElementById('code').value.trim();
-        var from = document.getElementById('from').value;
-        var till = document.getElementById('till').value;
+        var from = document.getElementById('from').value.replace('T', ' ');
+        var till = document.getElementById('till').value.replace('T', ' ');
         var referenceId = document.getElementById('reference_id').value.trim() || null;
 
         if (!code || !from || !till) {
@@ -202,7 +221,7 @@
           return;
         }
 
-        if (new Date(till) < new Date(from)) {
+        if (parseLocalDate(till) < parseLocalDate(from)) {
           Homey.alert(__('error_date'));
           return;
         }
@@ -237,6 +256,11 @@
         div.appendChild(document.createTextNode(str));
         return div.innerHTML;
       }
+
+      document.getElementById('refresh-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        loadCodes();
+      });
 
       loadCodes();
     }
