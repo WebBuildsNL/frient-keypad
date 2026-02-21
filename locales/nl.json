@@ -1,5 +1,7 @@
 {
   "settings": {
+    "tab_codes": "Toegangscodes",
+    "tab_log": "Logboek",
     "title_codes": "Toegangscodes",
     "title_add": "Nieuwe code toevoegen",
     "label_name": "Naam (bijv. \"Gast 1\")",
@@ -24,6 +26,7 @@
     "removed": "Code verwijderd.",
     "error_required": "Vul de pincode, startdatum/-tijd en einddatum/-tijd in.",
     "error_date": "\"Geldig tot\" moet op of na \"Geldig vanaf\" liggen.",
-    "error_duplicate": "Er bestaat al een code met dezelfde pincode en datumbereik."
+    "error_duplicate": "Er bestaat al een code met dezelfde pincode en datumbereik.",
+    "log_legend": "Laatste 500 regels van het app-logboek. Ververst elke 5 seconden."
   }
 }

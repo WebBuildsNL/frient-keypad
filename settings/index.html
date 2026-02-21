@@ -76,38 +76,98 @@
       font-style: italic;
       color: #27ae60;
     }
-    .expired { color: #999; }
-    .active { color: #27ae60; font-weight: 600; }
-    .future { color: #1E90FF; }
+    .status-expired { color: #999; }
+    .status-active { color: #27ae60; font-weight: 600; }
+    .status-future { color: #1E90FF; }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 1em;
+    }
+    .tab-bar button {
+      background: none;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-bar button.active {
+      color: #1E90FF;
+      border-bottom-color: #1E90FF;
+    }
+    .tab-bar button:hover {
+      color: #333;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Log */
+    #log {
+      width: 100%;
+      font-family: monospace;
+      font-size: 12px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .log-legend {
+      color: #999;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
-  <h2 id="title-codes" style="display:inline;"></h2> <a href="#" id="refresh-btn" style="font-size:13px; color:#1E90FF; text-decoration:none; vertical-align:middle;"></a>
-  <div id="codes-list"></div>
+  <div class="tab-bar">
+    <button class="active" data-tab="codes" id="tab-codes"></button>
+    <button data-tab="log" id="tab-log"></button>
+  </div>
 
-  <h2 id="title-add"></h2>
-  <div class="form-group">
-    <label for="name" id="label-name"></label>
-    <input type="text" id="name" placeholder="Guest 1">
+  <div class="tab-panel active" id="panel-codes">
+    <h2 id="title-codes" style="display:inline;"></h2> <a href="#" id="refresh-btn" style="font-size:13px; color:#1E90FF; text-decoration:none; vertical-align:middle;"></a>
+    <div id="codes-list"></div>
+
+    <h2 id="title-add"></h2>
+    <div class="form-group">
+      <label for="name" id="label-name"></label>
+      <input type="text" id="name" placeholder="Guest 1">
+    </div>
+    <div class="form-group">
+      <label for="code" id="label-code"></label>
+      <input type="text" id="code" placeholder="1234" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label for="from" id="label-from"></label>
+      <input type="datetime-local" id="from">
+    </div>
+    <div class="form-group">
+      <label for="till" id="label-till"></label>
+      <input type="datetime-local" id="till">
+    </div>
+    <div class="form-group">
+      <label for="reference_id" id="label-reference_id"></label>
+      <input type="text" id="reference_id" placeholder="BOOK-12345">
+    </div>
+    <button class="btn btn-primary" id="add-btn"></button>
+    <div class="status" id="status"></div>
   </div>
-  <div class="form-group">
-    <label for="code" id="label-code"></label>
-    <input type="text" id="code" placeholder="1234" inputmode="numeric">
+
+  <div class="tab-panel" id="panel-log">
+    <p class="log-legend" id="log-legend"></p>
+    <textarea rows="20" cols="80" wrap="off" id="log" readonly></textarea>
   </div>
-  <div class="form-group">
-    <label for="from" id="label-from"></label>
-    <input type="datetime-local" id="from">
-  </div>
-  <div class="form-group">
-    <label for="till" id="label-till"></label>
-    <input type="datetime-local" id="till">
-  </div>
-  <div class="form-group">
-    <label for="reference_id" id="label-reference_id"></label>
-    <input type="text" id="reference_id" placeholder="BOOK-12345">
-  </div>
-  <button class="btn btn-primary" id="add-btn"></button>
-  <div class="status" id="status"></div>
 
   <script>
     function onHomeyReady(Homey) {
@@ -116,7 +176,31 @@
       var __ = function(key) { return Homey.__('settings.' + key); };
       var statusEl = document.getElementById('status');
 
-      // Set translated labels
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      // --- Tabs ---
+      document.getElementById('tab-codes').textContent = __('tab_codes');
+      document.getElementById('tab-log').textContent = __('tab_log');
+
+      var tabButtons = document.querySelectorAll('.tab-bar button');
+      for (var t = 0; t < tabButtons.length; t++) {
+        tabButtons[t].addEventListener('click', function() {
+          var target = this.getAttribute('data-tab');
+          for (var i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove('active');
+          }
+          this.classList.add('active');
+          document.getElementById('panel-codes').classList.remove('active');
+          document.getElementById('panel-log').classList.remove('active');
+          document.getElementById('panel-' + target).classList.add('active');
+        });
+      }
+
+      // --- Access Codes tab ---
       document.getElementById('title-codes').textContent = __('title_codes');
       document.getElementById('title-add').textContent = __('title_add');
       document.getElementById('label-name').textContent = __('label_name');
@@ -138,14 +222,14 @@
         var fromDate = parseLocalDate(from);
         var tillDate = parseLocalDate(till);
         if (till && till.length === 10) tillDate.setHours(23, 59, 59, 999);
-        if (now > tillDate) return 'expired';
-        if (now < fromDate) return 'future';
-        return 'active';
+        if (now > tillDate) return 'status-expired';
+        if (now < fromDate) return 'status-future';
+        return 'status-active';
       }
 
       function getStatusLabel(cls) {
-        if (cls === 'expired') return __('status_expired');
-        if (cls === 'future') return __('status_upcoming');
+        if (cls === 'status-expired') return __('status_expired');
+        if (cls === 'status-future') return __('status_upcoming');
         return __('status_active');
       }
 
@@ -251,17 +335,27 @@
         });
       });
 
-      function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-      }
-
       document.getElementById('refresh-btn').addEventListener('click', function(e) {
         e.preventDefault();
         loadCodes();
       });
 
+      // --- Log tab ---
+      document.getElementById('log-legend').textContent = __('log_legend');
+
+      function refreshLog() {
+        Homey.get('log', function(err, log) {
+          if (err) return;
+          var logElement = document.getElementById('log');
+          logElement.value = log || '';
+          logElement.scrollTop = logElement.scrollHeight;
+        });
+      }
+
+      refreshLog();
+      setInterval(refreshLog, 5000);
+
+      // Initial load
       loadCodes();
     }
   </script>

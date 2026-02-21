@@ -138,6 +138,9 @@ class KeypadDevice extends ZigBeeDevice {
 
   async _triggerCodeEntered({ code, action, zoneId, code_valid, code_name }) {
     try {
+      const label = code_name || 'Unknown';
+      const validity = code_valid ? 'valid' : 'invalid';
+      this.log(`Code "${label}" used — action: ${action}, ${validity}`);
       await this._codeEnteredTrigger.trigger(this, { code, action, zone_id: zoneId, code_valid, code_name });
     } catch (err) {
       this.error('Failed to trigger keypad_code_entered:', err);
@@ -146,6 +149,7 @@ class KeypadDevice extends ZigBeeDevice {
 
   async _triggerEmergency() {
     try {
+      this.log('Emergency button pressed');
       await this._emergencyTrigger.trigger(this, {});
     } catch (err) {
       this.error('Failed to trigger keypad_emergency:', err);

@@ -1,5 +1,7 @@
 {
   "settings": {
+    "tab_codes": "Access Codes",
+    "tab_log": "Log",
     "title_codes": "Access Codes",
     "title_add": "Add New Code",
     "label_name": "Name (e.g. \"Guest 1\")",
@@ -24,6 +26,7 @@
     "removed": "Code removed.",
     "error_required": "Please fill in the PIN code, start date/time, and end date/time.",
     "error_date": "\"Valid until\" must be on or after \"Valid from\".",
-    "error_duplicate": "A code with the same PIN and date range already exists."
+    "error_duplicate": "A code with the same PIN and date range already exists.",
+    "log_legend": "Last 500 lines of the app log. Refreshes every 5 seconds."
   }
 }
