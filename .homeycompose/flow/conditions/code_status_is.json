@@ -1,0 +1,59 @@
+{
+  "title": {
+    "en": "Code status !{{is|is not}} ...",
+    "nl": "Codestatus !{{is|is niet}} ..."
+  },
+  "titleFormatted": {
+    "en": "Code status !{{is|is not}} [[status]]",
+    "nl": "Codestatus !{{is|is niet}} [[status]]"
+  },
+  "hint": {
+    "en": "Checks the status of the last entered code.",
+    "nl": "Controleert de status van de laatst ingevoerde code."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=keypad"
+    },
+    {
+      "type": "dropdown",
+      "name": "status",
+      "title": {
+        "en": "Status",
+        "nl": "Status"
+      },
+      "values": [
+        {
+          "id": "valid",
+          "label": {
+            "en": "Valid",
+            "nl": "Geldig"
+          }
+        },
+        {
+          "id": "upcoming",
+          "label": {
+            "en": "Upcoming",
+            "nl": "Aankomend"
+          }
+        },
+        {
+          "id": "expired",
+          "label": {
+            "en": "Expired",
+            "nl": "Verlopen"
+          }
+        },
+        {
+          "id": "unknown",
+          "label": {
+            "en": "Unknown",
+            "nl": "Onbekend"
+          }
+        }
+      ]
+    }
+  ]
+}

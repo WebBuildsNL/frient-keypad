@@ -58,6 +58,15 @@
         "nl": "Codenaam"
       },
       "example": "Guest 1"
+    },
+    {
+      "name": "code_status",
+      "type": "string",
+      "title": {
+        "en": "Code status",
+        "nl": "Codestatus"
+      },
+      "example": "valid"
     }
   ]
 }
