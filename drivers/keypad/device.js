@@ -44,6 +44,7 @@ class KeypadDevice extends ZigBeeDevice {
     });
 
     this._iasAceBoundCluster._currentAction = this._lastAction;
+    this._endpoint = endpoint;
     endpoint.bind(CLUSTER.IAS_ACE.NAME, this._iasAceBoundCluster);
 
     // IAS Zone (cluster 0x0500) — enrollment + tamper alarm
@@ -173,6 +174,14 @@ class KeypadDevice extends ZigBeeDevice {
   }
 
   onDeleted() {
+    if (this._endpoint) {
+      if (this._endpoint.clusters.iasZone) {
+        this._endpoint.clusters.iasZone.removeAllListeners('attr.zoneStatus');
+      }
+      if (this._endpoint.clusters.powerConfiguration) {
+        this._endpoint.clusters.powerConfiguration.removeAllListeners('attr.batteryPercentageRemaining');
+      }
+    }
     this.log('Frient Keypad device deleted');
   }
 

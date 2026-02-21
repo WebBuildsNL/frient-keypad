@@ -20,9 +20,13 @@ module.exports = {
   // POST /codes — add a new access code
   // Body: { name: string, code: string, from: "YYYY-MM-DD HH:mm[:ss]", till: "YYYY-MM-DD HH:mm[:ss]", reference_id: string|number|null }
   async postCodes({ homey, body }) {
-    if (!body.code || !body.from || !body.till) {
+    if (!body || !body.code || !body.from || !body.till) {
       throw new Error('Missing required fields: code, from, till');
     }
+
+    const name = String(body.name || '').slice(0, 100);
+    const codeRaw = String(body.code).slice(0, 20);
+    const refId = body.reference_id != null ? String(body.reference_id).slice(0, 50) : null;
 
     const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/;
     const fromRaw = String(body.from).replace('T', ' ');
@@ -45,7 +49,7 @@ module.exports = {
     }
 
     const codes = homey.settings.get('codes') || [];
-    const newCode = String(body.code).trim();
+    const newCode = codeRaw.trim();
     if (!newCode) {
       throw new Error('Code cannot be empty or whitespace-only');
     }
@@ -55,11 +59,11 @@ module.exports = {
     }
 
     codes.push({
-      name: body.name || '',
+      name,
       code: newCode,
       from: fromNorm,
       till: tillNorm,
-      reference_id: body.reference_id != null ? body.reference_id : null,
+      reference_id: refId,
     });
     homey.settings.set('codes', codes);
     return normalizeCodes(codes);
