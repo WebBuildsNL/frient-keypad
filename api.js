@@ -18,19 +18,23 @@ module.exports = {
   },
 
   // POST /codes — add a new access code
-  // Body: { name: string, code: string, from: "YYYY-MM-DD HH:mm", till: "YYYY-MM-DD HH:mm", reference_id: string|number|null }
+  // Body: { name: string, code: string, from: "YYYY-MM-DD HH:mm[:ss]", till: "YYYY-MM-DD HH:mm[:ss]", reference_id: string|number|null }
   async postCodes({ homey, body }) {
     if (!body.code || !body.from || !body.till) {
       throw new Error('Missing required fields: code, from, till');
     }
 
-    const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-    const fromNorm = String(body.from).replace('T', ' ').replace(/:\d{2}$/, '');
-    const tillNorm = String(body.till).replace('T', ' ').replace(/:\d{2}$/, '');
+    const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/;
+    const fromRaw = String(body.from).replace('T', ' ');
+    const tillRaw = String(body.till).replace('T', ' ');
 
-    if (!datetimeRegex.test(fromNorm) || !datetimeRegex.test(tillNorm)) {
-      throw new Error('Invalid format: from and till must be "YYYY-MM-DD HH:mm"');
+    if (!datetimeRegex.test(fromRaw) || !datetimeRegex.test(tillRaw)) {
+      throw new Error('Invalid format: from and till must be "YYYY-MM-DD HH:mm" or "YYYY-MM-DD HH:mm:ss"');
     }
+
+    // Normalize to "YYYY-MM-DD HH:mm" for consistent storage and comparison
+    const fromNorm = fromRaw.slice(0, 16);
+    const tillNorm = tillRaw.slice(0, 16);
 
     if (Number.isNaN(new Date(fromNorm).getTime()) || Number.isNaN(new Date(tillNorm).getTime())) {
       throw new Error('Invalid date values for from or till');
