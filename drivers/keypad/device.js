@@ -16,6 +16,7 @@ class KeypadDevice extends ZigBeeDevice {
     if (!endpoint) {
       this.error('Endpoint 44 not found on this device!');
       this.homey.app.writeLog('ERROR: Endpoint 44 not found on this device');
+      await this.setUnavailable('Endpoint 44 not found — try re-pairing the device');
       return;
     }
 

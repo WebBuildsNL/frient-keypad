@@ -40,6 +40,10 @@ module.exports = {
       throw new Error('Invalid date values for from or till');
     }
 
+    if (fromNorm >= tillNorm) {
+      throw new Error('from must be before till');
+    }
+
     const codes = homey.settings.get('codes') || [];
     const newCode = String(body.code).trim();
     if (!newCode) {
