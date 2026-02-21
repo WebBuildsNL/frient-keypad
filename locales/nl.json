@@ -27,6 +27,6 @@
     "error_required": "Vul de pincode, startdatum/-tijd en einddatum/-tijd in.",
     "error_date": "\"Geldig tot\" moet op of na \"Geldig vanaf\" liggen.",
     "error_duplicate": "Er bestaat al een code met dezelfde pincode en datumbereik.",
-    "log_legend": "Laatste 500 regels van het app-logboek. Ververst elke 5 seconden."
+    "log_legend": "Laatste 200 regels van het app-logboek. Ververst elke 5 seconden."
   }
 }

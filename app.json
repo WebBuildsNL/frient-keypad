@@ -43,12 +43,12 @@
     "triggers": [
       {
         "title": {
-          "en": "A code was entered",
-          "nl": "Er is een code ingevoerd"
+          "en": "An action button was pressed",
+          "nl": "Er is een actieknop ingedrukt"
         },
         "hint": {
-          "en": "Triggers when a PIN code is entered on the keypad and an arm/disarm button is pressed.",
-          "nl": "Wordt geactiveerd wanneer een pincode wordt ingevoerd op het keypad en er op een arm/disarm knop wordt gedrukt."
+          "en": "Triggers when a lock, unlock, home, or night button is pressed on the keypad, with or without a PIN code.",
+          "nl": "Wordt geactiveerd wanneer een vergrendel-, ontgrendel-, thuis- of nachtknop wordt ingedrukt op het keypad, met of zonder pincode."
         },
         "args": [
           {
@@ -297,50 +297,6 @@
       }
     ],
     "actions": [
-      {
-        "title": {
-          "en": "Accept the entered code",
-          "nl": "Accepteer de ingevoerde code"
-        },
-        "titleFormatted": {
-          "en": "Accept the entered code",
-          "nl": "Accepteer de ingevoerde code"
-        },
-        "hint": {
-          "en": "Confirms the code on the keypad (green LED). Place this in the THEN branch of your flow.",
-          "nl": "Bevestigt de code op het keypad (groene LED). Plaats dit in de DAN-tak van je flow."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=keypad"
-          }
-        ],
-        "id": "accept_code"
-      },
-      {
-        "title": {
-          "en": "Reject the entered code",
-          "nl": "Weiger de ingevoerde code"
-        },
-        "titleFormatted": {
-          "en": "Reject the entered code",
-          "nl": "Weiger de ingevoerde code"
-        },
-        "hint": {
-          "en": "Rejects the code on the keypad (red LED). Place this in the ELSE branch of your flow.",
-          "nl": "Weigert de code op het keypad (rode LED). Plaats dit in de ANDERS-tak van je flow."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=keypad"
-          }
-        ],
-        "id": "reject_code"
-      },
       {
         "title": {
           "en": "Set keypad mode to ...",

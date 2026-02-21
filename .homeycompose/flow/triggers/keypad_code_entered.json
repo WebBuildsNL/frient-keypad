@@ -1,11 +1,11 @@
 {
   "title": {
-    "en": "A code was entered",
-    "nl": "Er is een code ingevoerd"
+    "en": "An action button was pressed",
+    "nl": "Er is een actieknop ingedrukt"
   },
   "hint": {
-    "en": "Triggers when a PIN code is entered on the keypad and an arm/disarm button is pressed.",
-    "nl": "Wordt geactiveerd wanneer een pincode wordt ingevoerd op het keypad en er op een arm/disarm knop wordt gedrukt."
+    "en": "Triggers when a lock, unlock, home, or night button is pressed on the keypad, with or without a PIN code.",
+    "nl": "Wordt geactiveerd wanneer een vergrendel-, ontgrendel-, thuis- of nachtknop wordt ingedrukt op het keypad, met of zonder pincode."
   },
   "args": [
     {

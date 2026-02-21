@@ -134,14 +134,6 @@ class KeypadDevice extends ZigBeeDevice {
         await this.setStoreValue('currentAction', args.mode);
       });
 
-    this.homey.flow.getActionCard('accept_code')
-      .registerRunListener(async () => {
-        this._iasAceBoundCluster._currentAction = this._lastAction;
-        await this.setStoreValue('currentAction', this._lastAction);
-      });
-
-    this.homey.flow.getActionCard('reject_code')
-      .registerRunListener(async () => {});
   }
 
   async _triggerCodeEntered({ code, action, zoneId, code_valid, code_name, code_status }) {
@@ -158,6 +150,7 @@ class KeypadDevice extends ZigBeeDevice {
   async _triggerEmergency() {
     try {
       this.log('Emergency button pressed');
+      this.homey.app.writeLog('Emergency button pressed');
       await this._emergencyTrigger.trigger(this, {});
     } catch (err) {
       this.error('Failed to trigger keypad_emergency:', err);
