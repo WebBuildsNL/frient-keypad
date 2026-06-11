@@ -47,13 +47,13 @@ The app exposes REST endpoints for programmatic code management. Authenticate wi
 
 **List all codes:**
 ```bash
-curl http://<homey>/api/app/com.frient.keypad.coderead/codes \
+curl http://<homey>/api/app/nl.webbuilds.frient.keypad/codes \
   -H "Authorization: Bearer <token>"
 ```
 
 **Add a code:**
 ```bash
-curl -X POST http://<homey>/api/app/com.frient.keypad.coderead/codes \
+curl -X POST http://<homey>/api/app/nl.webbuilds.frient.keypad/codes \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -67,7 +67,7 @@ curl -X POST http://<homey>/api/app/com.frient.keypad.coderead/codes \
 
 **Delete a code (by index):**
 ```bash
-curl -X DELETE "http://<homey>/api/app/com.frient.keypad.coderead/codes?index=0" \
+curl -X DELETE "http://<homey>/api/app/nl.webbuilds.frient.keypad/codes?index=0" \
   -H "Authorization: Bearer <token>"
 ```
 

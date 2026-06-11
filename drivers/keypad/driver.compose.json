@@ -32,6 +32,7 @@
   "connectivity": ["zigbee"],
   "images": {
     "small": "/drivers/keypad/assets/images/small.png",
-    "large": "/drivers/keypad/assets/images/large.png"
+    "large": "/drivers/keypad/assets/images/large.png",
+    "xlarge": "/drivers/keypad/assets/images/xlarge.png"
   }
 }

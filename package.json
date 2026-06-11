@@ -1,5 +1,5 @@
 {
-  "name": "com.frient.keypad.coderead",
+  "name": "nl.webbuilds.frient.keypad",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
